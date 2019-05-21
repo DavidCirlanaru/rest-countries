@@ -37,7 +37,7 @@
 
           <div class="container countries-container">
               <div class="row country-row row-eq-height">
-                <div v-for="country in countries" v-bind:key="country.id" class="col-lg-2 col-sm-3 col-md-4">
+                <div v-for="country in countries" v-bind:key="country.id" class="col-lg-3 col-sm-4">
                   <Country :data="country"></Country>
                 </div>
               </div>
@@ -63,9 +63,22 @@ export default {
   },
   data() {
     return {
-      countries: null
+      countries: []
     };
   },
+  methods: {
+    scroll() {
+      windows.onscroll = () => {
+        let bottomOfWindow = document.documentElement.scrollTop + 
+        window.innerHeight === document.documentElement.offsetHeight;
+
+  if (bottomOfWindow) {
+    // Do something, anything!
+  }
+      }
+    }
+  },
+
   mounted() {
     axios
       .get("https://restcountries.eu/rest/v2/all")
