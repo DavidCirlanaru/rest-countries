@@ -15,6 +15,7 @@
                       type="text"
                       class="form-control search-input"
                       placeholder="Search for a country.."
+                      v-model="search"
                     >
                   </div>
 
@@ -22,15 +23,8 @@
                     class="col-lg-2 col-md-6 col-sm-6 col-xs-12 text-right align-items-end filter-column"
                   >
                     <span>{{selectedRegion}}</span>
-                    <select
-                      v-model="selectedRegion"
-                      class="form-control"
-                      id="regionSelect"
-                    >
-                      <option
-                        v-for="region in filteredRegions"
-                        v-bind:key="region.id"
-                      >{{ region }}</option>
+                    <select v-model="selectedRegion" class="form-control" id="regionSelect">
+                      <option v-for="region in filteredRegions" v-bind:key="region.id">{{ region }}</option>
                     </select>
                   </div>
                 </div>
@@ -41,13 +35,13 @@
           <div class="container countries-container">
             <div class="row country-row row-eq-height justify-content-center">
               <div
-                v-for="country in initialCountries(currentPage, elementsInPage)"
+                v-for="country in displayCountries"
                 v-bind:key="country.id"
                 class="col-lg-3 col-sm-4"
               >
                 <Country :data="country"></Country>
               </div>
-              <button v-on:click="loadMore()" class="btn btn-success load-more-button">Load More</button>
+              <button v-if="storeCountries.length > (currentView + elementsInPage)" v-on:click="loadMore()" class="btn btn-success load-more-button">Load More</button>
             </div>
           </div>
         </div>
@@ -71,39 +65,70 @@ export default {
   },
 
   data() {
+  
     return {
       countries: [],
-      currentPage: 0,
+      storeCountries: [],
+      displayCountries: [],
       elementsInPage: 8,
+      currentView: 0,
       availableRegions: [],
-      selectedRegion: " "
+      selectedRegion: "",
+      search: ""
     };
   },
 
   computed: {
-    filteredRegions: function () {
-      return [...new Set(this.countries.map(i => i.region))]
+    filteredRegions: function() {
+      return [...new Set(this.storeCountries.map(i => i.region))];
+    },
+
+    searchResults: function() {
+      return this.storeCountries.filter((country) => {
+        return country.name.toLowerCase().includes(this.search.toLowerCase());
+      });
     }
   },
 
   methods: {
-    initialCountries(pageNumber, requestedPages) {
-      let itemsPerPage = requestedPages;
-      return this.countries.slice(itemsPerPage * pageNumber, itemsPerPage);
+    renderCountries() {
+      this.displayCountries = this.storeCountries.slice(0, (this.currentView + this.elementsInPage));
     },
 
     loadMore() {
-      return (this.elementsInPage += 12);
+      this.currentView += this.elementsInPage;
+      this.renderCountries()
     },
 
+    filterEmptySpaces(array) {
+      array.filter(function(el) {
+        return el != null && el != "";
+      });
+    },
+
+    cloneCountries() {
+      this.currentView = 0;
+      this.storeCountries = Object.assign([], this.countries);
+    },
   },
 
-  
+  watch: {
+    search: function() {
+      this.cloneCountries();
+      this.storeCountries = this.searchResults;
+      this.renderCountries();
+    }
+  },
 
-  mounted() {
+  beforeMount() {
     axios
       .get("https://restcountries.eu/rest/v2/all")
-      .then(response => (this.countries = response.data));
+      .then(response => {
+        this.countries = response.data;
+        
+        this.cloneCountries();
+        this.renderCountries();
+      });
   }
 };
 </script>
