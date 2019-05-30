@@ -96,6 +96,13 @@ button.btn.btn-success.load-more-button {
 }
 
 
+// Transitions
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
 
 // Responsive
 @media screen and (min-width: 1200px) {
@@ -104,6 +111,6 @@ button.btn.btn-success.load-more-button {
     }
 
     img.card-img-top.country-image {
-        height: 15rem;
+        height: 14.5rem;
     }   
 }

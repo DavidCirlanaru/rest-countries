@@ -15,15 +15,15 @@
                       type="text"
                       class="form-control search-input"
                       placeholder="Search for a country.."
-                      v-model="search"
+                      v-model="searchByName"
                     >
                   </div>
 
                   <div
                     class="col-lg-2 col-md-6 col-sm-6 col-xs-12 text-right align-items-end filter-column"
                   >
-                    <span>{{selectedRegion}}</span>
                     <select v-model="selectedRegion" class="form-control" id="regionSelect">
+                      <option value disabled selected>Select a region</option>
                       <option v-for="region in filteredRegions" v-bind:key="region.id">{{ region }}</option>
                     </select>
                   </div>
@@ -33,7 +33,8 @@
           </div>
 
           <div class="container countries-container">
-            <div class="row country-row row-eq-height justify-content-center">
+            
+            <div class="row country-row row-eq-height justify-content-start">
               <div
                 v-for="country in displayCountries"
                 v-bind:key="country.id"
@@ -41,7 +42,13 @@
               >
                 <Country :data="country"></Country>
               </div>
-              <button v-if="storeCountries.length > (currentView + elementsInPage)" v-on:click="loadMore()" class="btn btn-success load-more-button">Load More</button>
+            </div>
+            <div class="row justify-content-center"> 
+                <button
+                class="btn btn-success load-more-button"
+                v-if="storeCountries.length > (currentView + elementsInPage)"
+                v-on:click="loadMore()"
+              >Load More</button>
             </div>
           </div>
         </div>
@@ -57,6 +64,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import axios from "axios";
 
+
 export default {
   name: "app",
   components: {
@@ -65,70 +73,86 @@ export default {
   },
 
   data() {
-  
     return {
       countries: [],
       storeCountries: [],
       displayCountries: [],
       elementsInPage: 8,
       currentView: 0,
-      availableRegions: [],
       selectedRegion: "",
-      search: ""
+      availableRegions: "",
+      searchByName: ""
     };
   },
 
   computed: {
+    //Returning an array of unique regions and removing empty strings
     filteredRegions: function() {
-      return [...new Set(this.storeCountries.map(i => i.region))];
+      return [...new Set(this.storeCountries.map(i => i.region))].filter(
+        function(el) {
+          return el != "";
+        }
+      );
+    },
+
+    matchingRegions: function() {
+      return this.availableRegions.filter(match => {
+        return match.region.includes(this.selectedRegion);
+      });
     },
 
     searchResults: function() {
-      return this.storeCountries.filter((country) => {
-        return country.name.toLowerCase().includes(this.search.toLowerCase());
+      return this.storeCountries.filter(country => {
+        return country.name
+          .toLowerCase()
+          .includes(this.searchByName.toLowerCase());
       });
     }
   },
 
   methods: {
+    //Rendering only 8 countries on the page at first
     renderCountries() {
-      this.displayCountries = this.storeCountries.slice(0, (this.currentView + this.elementsInPage));
+      this.displayCountries = this.storeCountries.slice(
+        0,
+        this.currentView + this.elementsInPage
+      );
     },
 
     loadMore() {
       this.currentView += this.elementsInPage;
-      this.renderCountries()
+      this.renderCountries();
     },
 
-    filterEmptySpaces(array) {
-      array.filter(function(el) {
-        return el != null && el != "";
-      });
-    },
-
+    //Duplicating the data recieved from the API
     cloneCountries() {
       this.currentView = 0;
       this.storeCountries = Object.assign([], this.countries);
-    },
+    }
   },
 
   watch: {
-    search: function() {
+    searchByName: function() {
       this.cloneCountries();
       this.storeCountries = this.searchResults;
       this.renderCountries();
+    },
+
+    selectedRegion: function() {
+      this.availableRegions = Object.assign([], this.countries);
+      this.displayCountries = this.matchingRegions;
     }
   },
 
   beforeMount() {
-    axios
-      .get("https://restcountries.eu/rest/v2/all")
-      .then(response => {
-        this.countries = response.data;
-        
-        this.cloneCountries();
-        this.renderCountries();
-      });
+    axios.get("https://restcountries.eu/rest/v2/all").then(response => {
+      this.countries = response.data;
+
+      //Duplicating the data as soon as we recieve it
+      this.cloneCountries();
+      //Rendering only 8 elements from the duplicated object.
+      this.renderCountries();
+    });
   }
 };
 </script>
