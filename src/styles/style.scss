@@ -24,6 +24,11 @@ $default-font: 'Nunito Sans', sans-serif;
     padding-left: 0px;
 }
 
+a.link-to-details {
+    text-decoration: none;
+    color: $very-dark-blue-txt;
+}
+
 
 // Header
 div#header {
