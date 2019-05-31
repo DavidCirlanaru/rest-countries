@@ -14,10 +14,10 @@ Vue.use(VueRouter);
 const router = new VueRouter({
   routes: [
     { path: '/', component: MainContent },
-    { path: '/details/:country_name', component: Details }
+    { path: '/details/:alpha3Code', component: Details }
   ]
+  
 })
-
 
 new Vue({
   router,

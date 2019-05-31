@@ -37,10 +37,10 @@
                 v-for="country in displayCountries"
                 v-bind:key="country.id"
                 class="col-lg-3 col-sm-4"
+                v-on:click="formatRoute(country.alpha3Code)"
             >
-                <router-link to="/details/12" class="link-to-details">
-                <Country :data="country"></Country>
-                </router-link>
+                <Country  :data="country"></Country>
+               
             </div>
             </div>
             <div class="row justify-content-center">
@@ -120,6 +120,10 @@ export default {
     cloneCountries() {
       this.currentView = 0;
       this.storeCountries = Object.assign([], this.countries);
+    },
+
+    formatRoute(alphaCode) {
+      this.$router.push( {path: 'details/' + alphaCode})
     }
   },
 
