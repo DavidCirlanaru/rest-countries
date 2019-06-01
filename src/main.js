@@ -6,6 +6,7 @@ import BootstrapVue from 'bootstrap-vue'
 import VueRouter from 'vue-router'
 
 
+
 Vue.config.productionTip = false
 Vue.use(BootstrapVue);
 Vue.use(VueRouter);

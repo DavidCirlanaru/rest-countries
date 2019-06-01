@@ -36,7 +36,7 @@
             <div
                 v-for="country in displayCountries"
                 v-bind:key="country.id"
-                class="col-lg-3 col-sm-4"
+                class="col-lg-3 col-md-4 col-sm-6 col-xs-12"
                 v-on:click="formatRoute(country.alpha3Code)"
             >
                 <Country  :data="country"></Country>

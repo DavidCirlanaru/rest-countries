@@ -13,10 +13,12 @@ $details-font: 16px;
 $default-font: 'Nunito Sans', sans-serif;
 
 //Globals
-#root {
-    font-family: $default-font !important;
-    background-color: $white-elements;
+* {
     transition: transform .4s ease;
+}
+
+p, h1, h2, h3, h4, h5, a, span {
+    font-family: $default-font !important;
 }
 
 .container-fluid.app-container {
@@ -29,6 +31,11 @@ a.link-to-details {
     color: $very-dark-blue-txt;
 }
 
+h5.card-title {
+    font-weight: 700;
+    font-size: 26px;
+    margin-bottom: 1.5rem;
+}
 
 // Header
 div#header {
@@ -39,17 +46,35 @@ div#header {
         font-size: 20px;
         font-weight: 800;
         color: $dark-blue;
+        text-decoration: none;
     }
 
     span.dark-mode-button {
         font-size: 20px;
         font-weight: 600;
+        transition: .5s;
+    }
+
+    span.dark-mode-button:hover {
+        transition: .5s;
+        cursor: pointer;
     }
     
     .moon-icon {
         font-size: 20px;
         font-weight: 300;
+        transition: .5s;
         margin-right: 0.3rem;
+    }
+    
+    .fa-moon:before {
+        transition: .5s;
+    }
+
+    .fa-moon:hover:before {
+        // Changing to sun icon
+        content: "\f185";
+        transition: .5s;
     }
 }
 
@@ -100,14 +125,67 @@ button.btn.btn-success.load-more-button {
     padding: 15px 60px 15px 60px;
 }
 
+// Details
+
+img.details-image {
+    width: 100%;
+}
+
+.card-text {
+    font-weight:600;
+}
+
+.api-data {
+    font-weight: 400;
+}
+
+h2.card-title.details-title {
+    font-weight: 800;
+    margin-bottom: 2.5rem;
+}
+
+
+a.back-button {
+    -webkit-box-shadow: 0px -2px 5px 0px rgba(0,0,0,0.1);
+    -moz-box-shadow: 0px -2px 5px 0px rgba(0,0,0,0.1);
+    box-shadow: 0px -2px 5px 0px rgba(0,0,0,0.1);
+    text-decoration: none;
+    background-color: #fff;
+    color:$very-dark-blue-txt;
+    padding: 12px 40px;
+    margin-bottom: 2rem;
+    border-radius: 5% 0%;
+    transition: .5s;
+}
+
+a.back-button:hover {
+    background-color: $very-dark-blue-bg;
+    color: #fff;
+    transition: .5s;
+     
+    
+}
+
+.fa-arrow-left {
+    margin-right: 0.5rem;
+}
+
+.border-field {
+    margin-top: 3rem;
+}
 
 // Transitions
-.fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
-  }
-  .fade-enter, .fade-leave-to {
-    opacity: 0;
-  }
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 0.3s;
+  transition-property: opacity;
+  transition-timing-function: ease;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0
+}
 
 // Responsive
 @media screen and (min-width: 1200px) {
@@ -118,4 +196,18 @@ button.btn.btn-success.load-more-button {
     img.card-img-top.country-image {
         height: 14.5rem;
     }   
+
+    .details-container {
+        padding-top: 20px;
+    }
+    
+    .back-row {
+        margin-bottom: 5rem;
+    }
+}
+
+@media screen and (min-width:320px) and (max-width: 576px) {
+    .row.back-row {
+        margin-bottom: 2rem !important;
+    }
 }
