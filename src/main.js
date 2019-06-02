@@ -15,7 +15,7 @@ Vue.use(VueRouter);
 const router = new VueRouter({
   routes: [
     { path: '/', component: MainContent },
-    { path: '/details/:alpha3Code', component: Details }
+    { path: '/details/:name', component: Details }
   ]
   
 })

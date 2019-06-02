@@ -30,7 +30,7 @@
             </p>
             <p class="card-text">
               Population:
-              <span class="api-data">{{country.population}}</span>
+              <span class="api-data">{{formatPrice(country.population)}}</span>
             </p>
             <p class="card-text">
               Region:
@@ -45,7 +45,16 @@
               <span class="api-data">{{country.capital}}</span>
             </p>
 
-            <p class="card-text border-field">Border countries: <span class="api-data border-countries"> {{country.borders[1]}}</span></p>
+            <p class="card-text border-field">Border countries:</p>
+              
+              
+              <p
+                class="api-data border-countries" 
+                v-for="border in bordersList(country.borders)"
+                v-bind:key="border.id"
+                v-on:click="formatRoute(border)"
+              >{{ border }}</p>
+            
           </div>
 
           <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
@@ -61,8 +70,6 @@
               Languages:
               <span class="api-data">{{getLanguagesList(country.languages)}}</span>
             </p>
-            <p>{{generateBordersList(country.borders)}}</p>
-            
           </div>
         </div>
       </div>
@@ -71,7 +78,6 @@
 </template>
 
 <script>
-
 import axios from "axios";
 
 export default {
@@ -79,35 +85,48 @@ export default {
 
   data() {
     return {
-      countryDetails: [],
+      countryDetails: []
     };
   },
 
   computed: {
     matchingCountry: function() {
       return this.countryDetails.filter(match => {
-        return match.alpha3Code.includes(this.$route.params.alpha3Code);
+        return match.name.includes(this.$route.params.name);
       });
     }
   },
 
   methods: {
-    //To DO: 
-    // function to recieve an alphacode as parameter and return an array of country names based on recieved array of alphaCodes from country.borders.
-    getLanguagesList(array) {
-        return array.map(a => ' ' + a.name).toString();
+    // Return an array of country names based on a received 
+    // array of alphaCodes from the current country borders.
+    bordersList(alphaCodesArray) {
+      let borders = [];
+      if (alphaCodesArray != "") {
+        this.countryDetails.forEach(function(country) {
+          alphaCodesArray.forEach(function(matchCountryBorder) {
+            if (matchCountryBorder.includes(country.alpha3Code)) {
+              borders.push(country.name);
+            }
+          });
+        });
+      return borders;
+      }else {
+        return "-";
+      }
     },
 
-    generateBordersList(alphaCodesArray) {
-      
-      for (let i; i < alphaCodesArray.length; i++) {
-        if (alphaCodesArray[i] === this.countryDetails.alpha3Code) {
-          console.log('got here');
-          console.log(alphaCodesArray[i])
-        }
-      }
-    }
+    //Mapping the languages array into a displayable format
+    getLanguagesList(array) {
+      return array.map(a => " " + a.name).toString();
+    },
 
+    formatPrice(value) {
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    formatRoute(name) {
+      this.$router.push( {path: name})
+    }
   },
 
   beforeMount() {

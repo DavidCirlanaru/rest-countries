@@ -37,7 +37,7 @@
                 v-for="country in displayCountries"
                 v-bind:key="country.id"
                 class="col-lg-3 col-md-4 col-sm-6 col-xs-12"
-                v-on:click="formatRoute(country.alpha3Code)"
+                v-on:click="formatRoute(country.name)"
             >
                 <Country  :data="country"></Country>
                
@@ -122,8 +122,8 @@ export default {
       this.storeCountries = Object.assign([], this.countries);
     },
 
-    formatRoute(alphaCode) {
-      this.$router.push( {path: 'details/' + alphaCode})
+    formatRoute(name) {
+      this.$router.push( {path: 'details/' + name})
     }
   },
 
